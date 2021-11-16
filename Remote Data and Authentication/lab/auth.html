@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Demo</title>
+</head>
+
+<body>
+    <form id="register-form">
+        <div>
+            <p>
+                <label>
+                    <h2><u>Register Form</u></h2>
+                </label>
+            </p>
+            <p>
+                <label>Email: <input type="text" name="email" /></label>
+            </p>
+            <p>
+                <label>Password: <input type="password" name="password" /></label>
+            </p>
+            <p>
+                <label>Confirm Password: <input type="password" name="repass" /></label>
+            </p>
+            <p>
+                <input type="submit" value="Register" />
+            </p>
+        </div>
+    </form>
+
+    <br>
+
+    <form id="login-form">
+        <div>
+            <p>
+                <label>
+                    <h2><u>Login Form</u></h2>
+                </label>
+            </p>
+            <p>
+                <label>Email: <input type="text" name="email" /></label>
+            </p>
+            <p>
+                <label>Password: <input type="password" name="password" /></label>
+            </p>
+            <p>
+                <input type="submit" value="Login" />
+            </p>
+        </div>
+    </form>
+
+    <script>
+        const registerForm = document.getElementById('register-form');
+        registerForm.addEventListener('submit', onRegister);
+
+        async function onRegister(ev) {
+            const url = 'http://localhost:3030/users/register';
+            ev.preventDefault();
+            const formData = new FormData(registerForm);
+            // console.log([...formData.entries()]);
+
+            const email = formData.get('email').trim();
+            const password = formData.get('password').trim();
+            const repass = formData.get('repass').trim();
+
+            try {
+                const res = await fetch(url, {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                if (res.status != 200) {
+                    const error = await res.json();
+                    throw new Error(`Error: ${error.message}`);
+                }
+                const result = await res.json();
+
+                const token = result.accessToken;
+                sessionStorage.setItem('token', token);
+
+                window.location = '/index.html';
+
+                console.log(result);
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', onLogin);
+
+        async function onLogin(ev) {
+            const url = 'http://localhost:3030/users/login';
+            ev.preventDefault();
+            const formData = new FormData(loginForm);
+
+            const email = formData.get('email').trim();
+            const password = formData.get('password').trim();
+
+            try {
+                const res = await fetch(url, {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                if (res.status != 200) {
+                    const error = await res.json();
+                    throw new Error(`Error: ${error.message}`);
+                }
+                const result = await res.json();
+                const token = result.accessToken;
+
+                sessionStorage.setItem('token', token);
+
+                window.location = '/index.html';
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data and Auth Demo</title>
+</head>
+<body>
+    <a href="/auth.html">Login / Register</a>
+
+    <form method="POST" action="http://localhost:3030/jsonstore/phonebook">
+        <div>
+            <p>
+                <label>Contact Info</label>
+            </p>
+            <label>Person: <input type="text" name="person" /></label>
+            <label>Number: <input type="text" name="phone" /></label>
+            <p>
+                <input type="submit" value="Create Contact" />
+            </p>
+        </div>
+    </form>
+
+    <script>
+        const form = document.querySelector('form');
+        form.addEventListener('submit', onSubmit);
+
+        async function onSubmit() {
+            event.preventDefault();
+            const data = new FormData(form);
+
+            const person = data.get('person').trim();
+            const phone = data.get('phone').trim();
+            const record = { person, phone };
+
+            await postData(record);
+
+            form.reset();
+            alert('Contact Added!');
+        }
+
+        async function getData() {
+            const url = 'http://localhost:3030/jsonstore/phonebook';
+            
+            const options = { headers: {} };
+
+            const token = sessionStorage.getItem('token');
+            if (token !== null) {
+                options.headers['X-Authorization'] = token;
+            }
+            
+            const response = await fetch(url, options);
+            const data = await response.json();
+            return data;
+        }
+
+        async function getDataById(id) {
+            const url = `http://localhost:3030/jsonstore/phonebook/${id}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        }
+
+        async function postData(dataObj) {
+            const url = 'http://localhost:3030/jsonstore/phonebook';
+            
+            const options = {
+                method: 'post',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dataObj)
+            };
+            try {
+                //  resp ще хвърли грешка само при мрежови проблем
+                //  затова проверяваме дали данните са ок
+                //  или дали статуса е различен от 200 / 201 за created
+                const resp = await fetch(url, options);
+                if (resp.ok == false) {
+                    throw new Error(resp.statusText);
+                }
+                const result = await resp.json();
+                return result;
+            } catch (error) {
+                
+            }
+            
+        }
+
+        async function updateData(id, dataObj) {
+            const url = `http://localhost:3030/jsonstore/phonebook/${id}`;
+
+            const options = {
+                method: 'put',
+                headres: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dataObj)
+            };
+
+            const response = await fetch(url, options);
+            const result = await response.json();
+            return result;
+        }
+
+        async function deleteData(id) {
+            const url = `http://localhost:3030/jsonstore/phonebook/${id}`;
+
+            const options = {
+                method: 'delete'
+            };
+            
+            const resp = await fetch(url, options);
+            const result = await resp.json();
+            return result;
+        }
+    </script>
+</body>
+</html>
