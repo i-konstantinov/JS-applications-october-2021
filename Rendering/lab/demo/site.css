@@ -1,0 +1,27 @@
+body {
+    width: 980px;
+    margin: auto;
+    font-size: 24px;
+}
+
+article {
+    margin: 32px 0;
+    box-shadow: 0 0 15px 5px #999;
+    padding: 32px;
+}
+
+article footer {
+    color: #999;
+}
+
+.red {
+    background-color: rgba(209, 49, 49, 0.39);
+}
+
+.green {
+    background-color: rgba(11, 214, 11, 0.404);
+}
+
+.blue {
+    background-color: rgb(0, 195, 255)
+}
