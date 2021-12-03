@@ -1,0 +1,65 @@
+1. Extract project skeleton and examine files *
+
+2. Setup NPM project *
+- npm init -y > install page > install lit-html
+
+3. Analize the HTML and determine templates *
+
+4. Configure routing with placeholder modules *
+- created lib.js - bridge to outer functions
+- created app.js
+    - added static page functions for testing routs
+    - added page.start()
+- added routs in href for every corresponding element in html
+- added view js files containing basic viewPage function for every view
+- added view functions to app.js > page('path', viewPage)
+    - added id to details & edit /tested with console.log
+- got the data container
+- added middleware to page
+
+
+32:07
+
+5. Implement requests
+- created api folder in src
+- created api.js module
+- created data.js
+    - imported CRUD functions in data.js
+    - imported > exported auth functions
+    - added endpoint dependencies
+    - exported abstract CRUD functions
+- tested CRUD functions in app.js via window.api
+
+46:04
+
+6. Implement each view
+    a) created for catalog
+    b) created for login
+    c) created for register
+    d) created for my furniture
+    e) created for create.js
+
+6.1. Create static templates
+
+6.2. Implement fetch requests
+    b) for login
+        - added updateNav logic in app.js *
+        - added logic for logout in app.js *
+    d) for my furniture
+        - added extra logic in catalog.js for obtaining only my furniture
+
+6.3. Add params to templates
+    b) for login 
+        - custom display logic for bad input
+        - disabled aler() in requester *
+    c) for registerTemplate
+        - custom display logic for bad input
+    d) for my furniture
+        - added custom welcome msg to catalogTemplate
+    e) for create.js
+        - added form-fields validation in template
+
+6.4. Add event listeners (if any)
+    b) for login - @submit
+    c) for register = @submit
+    e) for create - @submit
