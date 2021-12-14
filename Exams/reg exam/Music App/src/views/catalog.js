@@ -39,6 +39,7 @@ export async function catalogPage(ctx) {
 async function loadAlbums() {
     const loggedUser = getUserData() ? true : false;
     const data = {};
+    
     const albums = await getAll();
     data.albums = albums;
     data.loggedUser = loggedUser;

@@ -54,7 +54,7 @@ export function createPage(ctx) {
                 }
             }
 
-            await createAlbum(fields)
+            await createAlbum(fields);
             ctx.updateNav();
             ctx.page.redirect('/catalog');
 
