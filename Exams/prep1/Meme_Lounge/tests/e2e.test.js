@@ -2,8 +2,8 @@
 const { chromium } = require('playwright-chromium');
 const { expect } = require('chai');
 
-const host = 'http://localhost:3000'; // Application host (NOT service host - that can be anything)
-const DEBUG = false;
+const host = 'http://localhost:3000/'; // Application host (NOT service host - that can be anything)
+const DEBUG = true;
 
 const mockData = require('./mock-data.json');
 const endpoints = {
@@ -257,9 +257,10 @@ describe('E2E tests', function () {
             expect(await page.isVisible('text=Login to see our memes')).to.be.true;
             expect(await page.isVisible('#button-div >> text=Login')).to.be.true;
             expect(await page.isVisible('#button-div >> text=Register')).to.be.true;
+            
         });
 
-        it('show most recent memes [ 10 Points ]', async () => {
+        it.only('show most recent memes [ 10 Points ]', async () => {
             await page.goto(host);
             await page.click('text=All Memes');
             await page.waitForTimeout(300);

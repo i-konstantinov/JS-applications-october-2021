@@ -31,7 +31,7 @@ export async function detailsPage(ctx) {
     ctx.render(detailsTemplate(meme, isOwner, onDelete));
     
     async function onDelete(ev) {
-        const choise = confirm("Are you suer you want to delete this meme?!");
+        const choise = confirm("Are you sure you want to delete this meme?!");
 
         if (choise) {
             await deleteMeme(ctx.params.id);

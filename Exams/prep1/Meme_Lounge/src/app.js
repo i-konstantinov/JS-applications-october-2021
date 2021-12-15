@@ -13,7 +13,7 @@ import * as api from "./api/data.js";
 import { getUserData } from "./util.js";
 
 
-window.api = api;
+// window.api = api;
 
 const root = document.querySelector('main');
 
