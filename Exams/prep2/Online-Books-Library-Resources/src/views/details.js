@@ -1,9 +1,9 @@
 import { html } from '../lib.js';
-import { getById, deleteBook} from '../api/data.js';
+import { getById, deleteBook, getLikesByBookId, getMyLikeByBookId, addLike} from '../api/data.js';
 import { getUserData } from '../util.js';
 
 
-const detailsTemplate = (book, data, onDelete) => html`
+const detailsTemplate = (book, data, onDelete, onLike) => html`
 <section id="details-page" class="details">
     <div class="book-information">
         <h3>${book.title}</h3>
@@ -13,19 +13,20 @@ const detailsTemplate = (book, data, onDelete) => html`
             ${data.creator ? html`
             <a class="button" href=${'/edit/' + book._id}>Edit</a>
             <a @click = ${onDelete} class="button" href="javascript:void(0)">Delete</a>` : null}
-        
-            <a 
+
+            ${data.loggedUser == true && data.creator == false && data.myLike == false ?
+            html`<a 
+            @click = ${() => onLike(book._id)}
             class="button" 
             href="javascript:void(0)"
-            style=${data.loggedUser == true && data.creator == false ? 'display: block' : 'display: none'}
-            >Like</a>
+            >Like</a>` 
+            : null}
             
-            <!-- ( for Guests and Users )  -->
             <div class="likes">
                 <img class="hearts" src="/images/heart.png">
-                <span id="total-likes">Likes: 0</span>
+                <span id="total-likes">Likes: ${data.totalLikes}</span>
             </div>
-            <!-- Bonus -->
+
         </div>
     </div>
     <div class="book-description">
@@ -36,18 +37,27 @@ const detailsTemplate = (book, data, onDelete) => html`
 
 
 export async function detailsPage(ctx) {
-    const book = await loadBook(ctx.params.id);
-    const data = {};
     const user = getUserData();
+
+    const [book, totalLikes, myLike] = await Promise.all([
+        loadBook(ctx.params.id),
+        getLikesByBookId(ctx.params.id),
+        user ? getMyLikeByBookId(ctx.params.id, user.id) : 0
+    ])
+    
+    const data = {};
     if (user && user != null) {
-        data.creator = user.id == book._ownerId;
         data.loggedUser = true;
+        data.creator = user.id == book._ownerId;
     } else {
-        data.creator = false;
         data.loggedUser = false;
+        data.creator = false;
     }
 
-    ctx.render(detailsTemplate(book, data, onDelete));
+    data.myLike = myLike != 0;
+    data.totalLikes = totalLikes;
+
+    ctx.render(detailsTemplate(book, data, onDelete, onLike));
 
     async function onDelete() {
         const choise = confirm('Are you sure you want to delete this book?');
@@ -55,6 +65,11 @@ export async function detailsPage(ctx) {
             await deleteBook(book._id);
             ctx.page.redirect('/');
         }
+    }
+
+    async function onLike(bookId) {
+        await addLike(bookId);
+        ctx.page.redirect('/details/' + bookId);
     }
 }
 
